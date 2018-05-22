@@ -17,6 +17,7 @@ from onmt.modules import Embeddings, ImageEncoder, CopyGenerator, \
 from onmt.Utils import use_gpu
 from torch.nn.init import xavier_uniform
 
+from spellembed.utils import getVocabSpell
 
 def make_embeddings(opt, word_dict, feature_dicts, for_encoder=True):
     """
@@ -171,6 +172,7 @@ def make_base_model(model_opt, fields, gpu, checkpoint=None):
     feature_dicts = onmt.io.collect_feature_vocabs(fields, 'tgt')
     tgt_embeddings = make_embeddings(model_opt, tgt_dict,
                                      feature_dicts, for_encoder=False)
+    spells = getVocabSpell(tgt_embeddings)
 
     # Share the embedding matrix - preprocess with share_vocab required.
     if model_opt.share_embeddings:
