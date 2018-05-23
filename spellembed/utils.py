@@ -47,17 +47,6 @@ def initWeights(m):
   if hasattr(m, 'bias'):
     m.bias.data.zero_()
 
-
-def tensorSort(v):
-  assert len(v.shape) == 1
-  sorted_v, ind_v = torch.sort(v, 0, descending=True)
-  return sorted_v, ind_v
-
-def tensorUnsort(sorted_v, sort_idx):
-  unsorted_v = torch.zeros_like(sorted_v)
-  unsorted_v[sort_idx] = sorted_v
-  return unsorted_v
-
 def tensorToList(v):
   if v.is_cuda:
     v_list = v.cpu().numpy().tolist()
@@ -65,3 +54,12 @@ def tensorToList(v):
     v_list = v.numpy().tolist()
   return v_list
 
+def tensorSort(v):
+  assert len(v.shape) == 1
+  sorted_v, ind_v = torch.sort(v, 0, descending=True)
+  return sorted_v, ind_v
+
+def tensorUnsort(sorted_v, sort_idx):
+  _ , unsort_idx = torch.sort(sort_idx)
+
+  return sorted_v[unsort_idx]

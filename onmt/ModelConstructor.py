@@ -179,7 +179,8 @@ def make_base_model(model_opt, fields, gpu, checkpoint=None):
                                      feature_dicts, for_encoder=False)
     else:
       spells = getVocabSpell(tgt_dict, gpu)
-      tgt_embeddings = Char2VecRNN(spells)
+      embedding_dim = model_opt.tgt_word_vec_size
+      tgt_embeddings = Char2VecRNN(spells, wordEmbedSize=embedding_dim, isBidir=True)
 
     # Share the embedding matrix - preprocess with share_vocab required.
     if model_opt.share_embeddings:
@@ -230,7 +231,7 @@ def make_base_model(model_opt, fields, gpu, checkpoint=None):
         if hasattr(model.encoder, 'embeddings'):
             model.encoder.embeddings.load_pretrained_vectors(
                     model_opt.pre_word_vecs_enc, model_opt.fix_word_vecs_enc)
-        if hasattr(model.decoder, 'embeddings'):
+        if hasattr(model.decoder, 'embeddings') and not USE_SPELLBMED:
             model.decoder.embeddings.load_pretrained_vectors(
                     model_opt.pre_word_vecs_dec, model_opt.fix_word_vecs_dec)
 
