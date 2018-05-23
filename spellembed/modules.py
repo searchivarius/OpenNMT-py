@@ -26,7 +26,8 @@ class Char2VecRNN(Module):
     initWeights(self.charEmbed)
     self.charRnn = LSTM(charEmbedSize, wordEmbedSize, num_layers=numLayers,
                         dropout=dropout, bidirectional=isBidir)
-    initWeights(self.charRnn)
+    for w in self.charRnn.all_weights:
+      initWeights(w)
 
   def batchRnn(self, charTensor, lenTensor):
     sortedLens, sortedLenIdx = tensorSort(lenTensor)
@@ -52,7 +53,6 @@ class Char2VecRNN(Module):
 
   def forward(self, data):
     isCuda = self.is_cuda
-    data = deviceMap(data, isCuda)
     dataIdxs = deviceMap(torch.arange(data.size(0)).long(), isCuda)
     spellData = self.word2chars[dataIdxs]
     charTensor = spellData[:, :-1]

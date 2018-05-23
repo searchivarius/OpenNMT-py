@@ -178,9 +178,8 @@ def make_base_model(model_opt, fields, gpu, checkpoint=None):
       tgt_embeddings = make_embeddings(model_opt, tgt_dict,
                                      feature_dicts, for_encoder=False)
     else:
-      spells = getVocabSpell(tgt_dict)
+      spells = getVocabSpell(tgt_dict, gpu)
       tgt_embeddings = Char2VecRNN(spells)
-
 
     # Share the embedding matrix - preprocess with share_vocab required.
     if model_opt.share_embeddings:

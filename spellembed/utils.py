@@ -3,7 +3,7 @@ import numpy as np
 
 SPECIAL_TOKEN_LIST = ['<unk>', '<blank>', '<s>', '</s>']
 SPECIAL_TOKENS = set(SPECIAL_TOKEN_LIST)
-ONE_WORD_TOKENS = set(['&quot;', '...', '&apos;'])
+ONE_WORD_TOKENS = set(['&quot;', '...', '&apos;', '-lrb-', '-rrb-'])
 
 def wordToChars(s):
   if s in SPECIAL_TOKENS or s in ONE_WORD_TOKENS:
