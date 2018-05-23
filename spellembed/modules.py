@@ -1,6 +1,11 @@
+import torch
+
 from torch.nn import Module, Dropout, LSTM, Embedding
 
-from spellembed.utils import initWeights
+# This is modelled after the following code:
+# https://github.com/arendu/pytorch-sgns/blob/master/model.py
+
+from spellembed.utils import *
 
 class Char2VecRNN(Module):
   def __init__(self,
@@ -19,6 +24,20 @@ class Char2VecRNN(Module):
     self.charRnn = LSTM(charEmbedSize, wordEmbedSize, num_layers=numLayers,
                         dropout=dropout, bidirectional=bidir)
     initWeights(self.charRnn)
+
+  def forward(self, data):
+    isCuda = self.is_cuda
+    data = deviceMap(data, isCuda)
+    dataIdxs = deviceMap(torch.arange(data.size(0)).long(), isCuda)
+    spellData = self.word2chars[dataIdxs]
+    chars = spellData[:, :-1]
+    lens = spellData[:, -1]
+    
+    return self.batchRnn(chars, lens)
+
+
+
+
 
 
 

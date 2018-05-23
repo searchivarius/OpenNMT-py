@@ -11,7 +11,10 @@ def wordToChars(s):
   else:
     return [c for c in s]
 
-def getVocabSpell(voc, padIdx = 0):
+def deviceMap(x, isCuda):
+  return x.cuda() if isCuda else x.cpu()
+
+def getVocabSpell(voc, isCuda, padIdx = 0):
   char2idx = {t : i for i, t in enumerate(SPECIAL_TOKEN_LIST)}
 
   maxLen = 0
@@ -32,7 +35,8 @@ def getVocabSpell(voc, padIdx = 0):
         char2idx[char] = len(char2idx)
       word2chars[wi, ci] = char2idx[char]
 
-  return torch.LongTensor(word2chars), len(char2idx)
+  return deviceMap(torch.LongTensor(word2chars), isCuda), \
+         len(char2idx)
 
 def initWeights(m):
   """
@@ -42,4 +46,24 @@ def initWeights(m):
     torch.nn.init.xavier_uniform(m.weight.data)
   if hasattr(m, 'bias'):
     m.bias.data.zero_()
+
+
+def tensorSort(v):
+  assert len(v.shape) == 1
+  sorted_v, ind_v = torch.sort(v, 0, descending=True)
+  return sorted_v, ind_v
+
+
+def tensorReverseSortIdx(sort_idx):
+  unsort_idx = torch.zeros_like(sort_idx).type_as(sort_idx).long()
+  unsort_idx = unsort_idx.scatter_(0, sort_idx, torch.arange(sort_idx.size(0)).type_as(sort_idx).long())
+  return unsort_idx
+
+
+def tensorToList(v):
+  if v.is_cuda:
+    v_list = v.cpu().numpy().tolist()
+  else:
+    v_list = v.numpy().tolist()
+  return v_list
 
