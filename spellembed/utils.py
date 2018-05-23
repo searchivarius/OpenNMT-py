@@ -53,12 +53,10 @@ def tensorSort(v):
   sorted_v, ind_v = torch.sort(v, 0, descending=True)
   return sorted_v, ind_v
 
-
-def tensorReverseSortIdx(sort_idx):
-  unsort_idx = torch.zeros_like(sort_idx).type_as(sort_idx).long()
-  unsort_idx = unsort_idx.scatter_(0, sort_idx, torch.arange(sort_idx.size(0)).type_as(sort_idx).long())
-  return unsort_idx
-
+def tensorUnsort(sorted_v, sort_idx):
+  unsorted_v = torch.zeros_like(sorted_v)
+  unsorted_v[sort_idx] = sorted_v
+  return unsorted_v
 
 def tensorToList(v):
   if v.is_cuda:
