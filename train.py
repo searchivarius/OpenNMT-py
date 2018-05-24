@@ -292,6 +292,7 @@ def check_save_model_path():
 
 
 def tally_parameters(model):
+    print('Tallying parameters...')
     n_params = sum([p.nelement() for p in model.parameters()])
     print('* number of parameters: %d' % n_params)
     enc = 0
