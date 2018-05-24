@@ -238,10 +238,14 @@ def make_base_model(model_opt, fields, gpu, checkpoint=None):
                     xavier_uniform(p)
 
         if hasattr(model.encoder, 'embeddings'):
+            print('Loading pre-trained source vectors from %s/%s' %
+                  (model_opt.pre_word_vecs_enc, model_opt.fix_word_vecs_enc))
             model.encoder.embeddings.load_pretrained_vectors(
                     model_opt.pre_word_vecs_enc, model_opt.fix_word_vecs_enc)
         if hasattr(model.decoder, 'embeddings') and model_opt.char_compos_type == 'none':
-            model.decoder.embeddings.load_pretrained_vectors(
+          print('Loading pre-trained source vectors from %s/%s' %
+                (model_opt.pre_word_vecs_dec, model_opt.fix_word_vecs_dec))
+          model.decoder.embeddings.load_pretrained_vectors(
                     model_opt.pre_word_vecs_dec, model_opt.fix_word_vecs_dec)
 
     # Add generator to model (this registers it as parameter of model).
