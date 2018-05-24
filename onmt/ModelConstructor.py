@@ -151,9 +151,12 @@ def make_base_model(model_opt, fields, gpu, checkpoint=None):
     # Make encoder.
     if model_opt.model_type == "text":
         src_dict = fields["src"].vocab
+        print('Collecting feature vocabularies...')
         feature_dicts = onmt.io.collect_feature_vocabs(fields, 'src')
+        print('Building source embeddings...')
         src_embeddings = make_embeddings(model_opt, src_dict,
                                          feature_dicts)
+        print('Building an encoder...')
         encoder = make_encoder(model_opt, src_embeddings)
     elif model_opt.model_type == "img":
         encoder = ImageEncoder(model_opt.enc_layers,
