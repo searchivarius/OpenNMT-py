@@ -487,10 +487,12 @@ def main():
     tally_parameters(model)
     check_save_model_path()
 
+    print('Building optimizer...')
     # Build optimizer.
     optim = build_optim(model, checkpoint)
 
     # Do training.
+    print('Prepare training...')
     train_model(model, fields, optim, data_type, model_opt)
 
     # If using tensorboard for logging, close the writer after training.
