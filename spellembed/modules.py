@@ -51,8 +51,7 @@ class Char2VecRNN(Module):
     output, (ht, ct) = self.charRnn(embedsPackedSorted, None)
 
     if self.charRnn.bidirectional:
-      # concat the last ht from fwd RNN and first ht from bwd RNN
-      ht = torch.cat([ht[0, :, :], ht[1, :, :]], dim=0)
+      ht = ht[0, :, :] + ht[1, :, :]
     else:
       ht = ht.squeeze(dim=0)
 

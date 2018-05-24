@@ -20,8 +20,6 @@ from torch.nn.init import xavier_uniform
 from spellembed.utils import getVocabSpell
 from spellembed.modules import Char2VecRNN
 
-USE_SPELLBMED=True
-
 def make_embeddings(opt, word_dict, feature_dicts, for_encoder=True):
     """
     Make an Embeddings instance.
@@ -174,13 +172,21 @@ def make_base_model(model_opt, fields, gpu, checkpoint=None):
     tgt_dict = fields["tgt"].vocab
     feature_dicts = onmt.io.collect_feature_vocabs(fields, 'tgt')
 
-    if not USE_SPELLBMED:
+    if model_opt.char_compos_type == 'none':
       tgt_embeddings = make_embeddings(model_opt, tgt_dict,
                                      feature_dicts, for_encoder=False)
+      print('Using standard embeddings')
     else:
       spells = getVocabSpell(tgt_dict, gpu)
       embedding_dim = model_opt.tgt_word_vec_size
-      tgt_embeddings = Char2VecRNN(spells, wordEmbedSize=embedding_dim, isBidir=True)
+      isBidir = model_opt.char_compos_type == 'brnn'
+      tgt_embeddings = Char2VecRNN(spells,
+                                   wordEmbedSize=embedding_dim,
+                                   charEmbedSize=model_opt.char_embed_size,
+                                   dropout=model_opt.dropout,
+                                   isBidir=isBidir)
+      print('Using char-level composition embeddings')
+      print(tgt_embeddings)
 
     # Share the embedding matrix - preprocess with share_vocab required.
     if model_opt.share_embeddings:
@@ -231,7 +237,7 @@ def make_base_model(model_opt, fields, gpu, checkpoint=None):
         if hasattr(model.encoder, 'embeddings'):
             model.encoder.embeddings.load_pretrained_vectors(
                     model_opt.pre_word_vecs_enc, model_opt.fix_word_vecs_enc)
-        if hasattr(model.decoder, 'embeddings') and not USE_SPELLBMED:
+        if hasattr(model.decoder, 'embeddings') and model_opt.char_compos_type == 'none':
             model.decoder.embeddings.load_pretrained_vectors(
                     model_opt.pre_word_vecs_dec, model_opt.fix_word_vecs_dec)
 
