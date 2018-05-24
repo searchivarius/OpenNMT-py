@@ -86,8 +86,10 @@ def model_opts(parser):
                        help="""The gate type to use in the RNNs""")
 
     group.add_argument('-char_compos_type', type=str,
-                       default = 'none', choices = set(['rnn', 'brnn', 'none']))
+                       default = 'none', choices = set(['cnn', 'rnn', 'brnn', 'none']))
     group.add_argument('-char_embed_size', type=int, default = 50)
+    group.add_argument('-char_comp_rnn_layer', type=int, default=2)
+    group.add_argument('-char_comp_cnn_chan_qty', type=int, default=50)
 
     # group.add_argument('-residual',   action="store_true",
     #                     help="Add residual connections between RNN layers.")

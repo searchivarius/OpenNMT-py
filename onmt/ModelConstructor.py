@@ -18,7 +18,7 @@ from onmt.Utils import use_gpu
 from torch.nn.init import xavier_uniform
 
 from spellembed.utils import getVocabSpell
-from spellembed.modules import Char2VecRNN
+from spellembed.modules import Char2VecRNN, Char2VecCNN
 
 def make_embeddings(opt, word_dict, feature_dicts, for_encoder=True):
     """
@@ -179,7 +179,7 @@ def make_base_model(model_opt, fields, gpu, checkpoint=None):
       tgt_embeddings = make_embeddings(model_opt, tgt_dict,
                                      feature_dicts, for_encoder=False)
       print('Using standard embeddings')
-    else:
+    elif model_opt.char_compos_type in ['rnn', 'brnn']:
       spells = getVocabSpell(tgt_dict, gpu)
       embedding_dim = model_opt.tgt_word_vec_size
       isBidir = model_opt.char_compos_type == 'brnn'
@@ -187,9 +187,22 @@ def make_base_model(model_opt, fields, gpu, checkpoint=None):
                                    wordEmbedSize=embedding_dim,
                                    charEmbedSize=model_opt.char_embed_size,
                                    dropout=model_opt.dropout,
-                                   isBidir=isBidir)
-      print('Using char-level composition embeddings')
-      print(tgt_embeddings)
+                                   isBidir=isBidir,
+                                   numLayers=model_opt.char_comp_rnn_layer)
+      print('Using char-level composition embeddings of type %s' % model_opt.char_compos_type)
+    else:
+      assert(model_opt.char_compos_type == 'cnn')
+
+      spells = getVocabSpell(tgt_dict, gpu)
+      embedding_dim = model_opt.tgt_word_vec_size
+
+      tgt_embeddings = Char2VecCNN(spells,
+                                   wordEmbedSize=embedding_dim,
+                                   charEmbedSize=model_opt.char_embed_size,
+                                   chanQty=model_opt.char_comp_cnn_chan_qty,
+                                   dropout=model_opt.dropout)
+
+      print('Using char-level composition embeddings of type %s' % model_opt.char_compos_type)
 
     # Share the embedding matrix - preprocess with share_vocab required.
     if model_opt.share_embeddings:
