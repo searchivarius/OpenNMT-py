@@ -253,6 +253,7 @@ def make_base_model(model_opt, fields, gpu, checkpoint=None):
 
     # Make the whole model leverage GPU if indicated to do so.
     if gpu:
+        print('Moving model to CUDA')
         model.cuda()
     else:
         model.cpu()
