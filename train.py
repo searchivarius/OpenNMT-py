@@ -21,6 +21,8 @@ import onmt.modules
 from onmt.Utils import use_gpu
 import onmt.opts
 
+import pdb, traceback
+
 
 parser = argparse.ArgumentParser(
     description='train.py',
@@ -501,4 +503,9 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except:
+        type, value, tb = sys.exc_info()
+        traceback.print_exc()
+        pdb.post_mortem(tb)
