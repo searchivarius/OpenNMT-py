@@ -47,5 +47,5 @@ if [ "$?" != "0" ] ; then
 fi
 
 PRED_FILE=$PRED_DIR/${COMP_OPT}.pred
-./translate.py -model "$MODEL_FULL_PATH" -src "$DATA_DIR/src-val.txt" -output "$PRED_FILE" -replace_unk -verbose
+python -u translate.py -model "$MODEL_FULL_PATH" -src "$DATA_DIR/src-val.txt" -output "$PRED_FILE" -replace_unk -verbose
 tools/multi-bleu-detok.perl "$DATA_DIR/tgt-val.txt" < "$PRED_FILE"
