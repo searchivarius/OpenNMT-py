@@ -13,6 +13,11 @@ if [ "$MODEL_DIR" = "" ] ; then
     echo "Specify model dir. (1d arg)"
     exit 1
 fi
+GPU_ID=$3
+GPU_OPT=""
+if [ "$GPU_ID" != "" ] ; then
+    GPU_OPT=" -gpuid $GPU_ID"
+fi
 
 TGT_VOC_SIZE=100000
 START_LR=0.1
@@ -28,7 +33,7 @@ RNN_LAYER_QTY=2
 EPOCH_QTY=2
 
 for comp_opt in none brnn cnn ; do
-    python -u train.py \
+    python -u train.py $GPU_OPT \
             -data $DATA_DIR/demo
             -save_model $MODEL_DIR/$comp_opt \
             -optim sgd -learning_rate $LR $MOMENTUM $NESTEROV -dropout $DROPOUT \
@@ -48,7 +53,7 @@ done
 EMBED_SIZE2=300 # two methods 300*2=600 (total)
 
 for comp_opt in brnn,cnn brnn,wembed ; do
-    python -u train.py \
+    python -u train.py $GPU_OPT \
             -data $DATA_DIR/demo
             -save_model $MODEL_DIR/$comp_opt \
             -optim sgd -learning_rate $LR $MOMENTUM $NESTEROV -dropout $DROPOUT \
@@ -68,7 +73,7 @@ done
 EMBED_SIZE3=200 # three methods 200*3=600 (total)
 
 for comp_opt in brnn,cnn,wembed ; do
-    python -u train.py \
+    python -u train.py $GPU_OPT \
             -data $DATA_DIR/demo
             -save_model $MODEL_DIR/$comp_opt \
             -optim sgd -learning_rate $LR $MOMENTUM $NESTEROV -dropout $DROPOUT \
