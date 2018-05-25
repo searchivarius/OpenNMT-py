@@ -18,8 +18,8 @@ GPU_OPT=""
 if [ "$GPU_ID" != "" ] ; then
     GPU_OPT=" -gpuid $GPU_ID"
 fi
+TRG_PREFIX="procData"
 
-TGT_VOC_SIZE=100000
 START_LR=0.1
 NESTEROV="-nesterov"
 MOMENTUM="-momentum 0.9"
@@ -34,11 +34,10 @@ EPOCH_QTY=2
 
 for comp_opt in none brnn cnn ; do
     python -u train.py $GPU_OPT \
-            -data $DATA_DIR/demo \
+            -data $DATA_DIR/$TRG_PREFIX \
             -save_model $MODEL_DIR/$comp_opt \
             -optim sgd -learning_rate $START_LR $MOMENTUM $NESTEROV -dropout $DROPOUT \
             -epochs $EPOCH_QTY \
-            -tgt_vocab_size $TGT_VOC_SIZE \
             -tgt_word_vec_size $EMBED_SIZE1 \
             -char_comp_cnn_chan_qty $CHAN_QTY \
             -char_comp_rnn_layer $RNN_LAYER_QTY \
@@ -54,11 +53,10 @@ EMBED_SIZE2=300 # two methods 300*2=600 (total)
 
 for comp_opt in brnn,cnn brnn,wembed ; do
     python -u train.py $GPU_OPT \
-            -data $DATA_DIR/demo \
+            -data $DATA_DIR/$TRG_PREFIX \
             -save_model $MODEL_DIR/$comp_opt \
             -optim sgd -learning_rate $START_LR $MOMENTUM $NESTEROV -dropout $DROPOUT \
             -epochs $EPOCH_QTY \
-            -tgt_vocab_size $TGT_VOC_SIZE \
             -tgt_word_vec_size $EMBED_SIZE2 \
             -char_comp_cnn_chan_qty $CHAN_QTY \
             -char_comp_rnn_layer $RNN_LAYER_QTY \
@@ -74,11 +72,10 @@ EMBED_SIZE3=200 # three methods 200*3=600 (total)
 
 for comp_opt in brnn,cnn,wembed ; do
     python -u train.py $GPU_OPT \
-            -data $DATA_DIR/demo  \
+            -data $DATA_DIR/$TRG_PREFIX  \
             -save_model $MODEL_DIR/$comp_opt \
             -optim sgd -learning_rate $START_LR $MOMENTUM $NESTEROV -dropout $DROPOUT \
             -epochs $EPOCH_QTY \
-            -tgt_vocab_size $TGT_VOC_SIZE \
             -tgt_word_vec_size $EMBED_SIZE3 \
             -char_comp_cnn_chan_qty $CHAN_QTY \
             -char_comp_rnn_layer $RNN_LAYER_QTY \

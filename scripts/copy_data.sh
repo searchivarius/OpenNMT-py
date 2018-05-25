@@ -1,8 +1,34 @@
 #!/bin/bash
+# Copy data from TED-talk folders to
+# our folders and rename to make standard names
 SRC_DIR=$1
+if [ "SRC_DIR" = "" ] ; then
+    echo "Specify src data dir. (1st arg)"
+    exit 1
+fi
+if [ ! -d "SRC_DIR" ] ; then
+    echo "Not a directory (1st arg)"
+    exit 1
+fi
 TRG_DIR=$2
+if [ "TRG_DIR" = "" ] ; then
+    echo "Specify dst data dir. (2d arg)"
+    exit 1
+fi
+if [ ! -d "TRG_DIR" ] ; then
+    echo "Not a directory (2d arg)"
+    exit 1
+fi
 LANG1=$3
+if [ "$LANG1" = "" ] ; then
+    echo "Specify src lang (3rd arg)"
+    exit 1
+fi
 LANG2=$4
+if [ "$LANG2" = "" ] ; then
+    echo "Specify trg lang (4th arg)"
+    exit 1
+fi
 
 for part1 in train dev test1 ; do
   if [ "$part1" = "dev" ] ; then
