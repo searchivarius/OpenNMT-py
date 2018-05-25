@@ -5,7 +5,7 @@ from torch.autograd import Variable
 
 from torch.nn.utils.rnn import pack_padded_sequence as pack
 
-import numpy as np
+from onmt.modules.Embeddings import Embeddings
 
 # This is modelled after the following code:
 # https://github.com/arendu/pytorch-sgns/blob/master/model.py
@@ -28,7 +28,6 @@ class Char2VecBase(Module):
     self.charEmbed = Embedding(charVocabSize, charEmbedSize, padding_idx=padIdx)
     initWeights(self.charEmbed)
     self.embedding_size = wordEmbedSize
-
 
 
   def embedReshapeChars(self, charTensor, lenTensor):
@@ -61,9 +60,9 @@ class Char2VecCNN(Char2VecBase):
                vocabSpell,
                wordEmbedSize,
                charEmbedSize=20,
+               chanQty = 50,
                padIdx=0,
-               dropout=0.3,
-               chanQty = 50
+               dropout=0.3
                ):
     super(Char2VecCNN, self).__init__(vocabSpell,
                                        wordEmbedSize,
@@ -138,7 +137,7 @@ class Char2VecRNN(Char2VecBase):
                padIdx=0,
                dropout=0.3,
                numLayers=2,
-               isBidir=False):
+               isBidir=True):
     super(Char2VecRNN, self).__init__(vocabSpell,
                                        wordEmbedSize,
                                        charEmbedSize,
@@ -173,15 +172,71 @@ class Char2VecRNN(Char2VecBase):
       ht = ht.squeeze(dim=0)
 
     ht = tensorUnsort(ht, sortIdx)
-
     ht = self.rnnFC(ht)
-
     ht = ht.view(sentLen, batchQty, -1)
 
     return ht
 
+class Char2VecComposite(Module):
+  def __init__(self,
+               vocabSpell,
+               configs,
+               charEmbedSize=20,
+               padIdx=0,
+               dropout=0.3):
+    super(Char2VecComposite, self).__init__()
 
+    totWordEmbedSize = 0
 
+    word2chars, _ = vocabSpell
+
+    self.modules = []
+    self.wordQty = word2chars.size(0)
+    print('Number of target lang. words: %d' % self.wordQty)
+
+    for modName, modConfig in configs.items():
+
+      embedSize = modConfig['embedSize']
+
+      if modName == 'rnn' or modName == 'brnn':
+        isBiDir = modName == 'brnn'
+
+        oneMod = Char2VecRNN(vocabSpell,
+                             wordEmbedSize=embedSize,
+                             charEmbedSize=charEmbedSize,
+                             dropout=dropout,
+                             isBidir=isBiDir,
+                             numLayers=modConfig['numLayers'])
+
+      elif modName == 'cnn':
+
+        oneMod = Char2VecCNN(vocabSpell,
+                             wordEmbedSize=embedSize,
+                             charEmbedSize=charEmbedSize,
+                             chanQty=modConfig['chanQty'],
+                             padIdx=padIdx,
+                             dropout=dropout)
+
+      elif modName == 'wembed':
+
+        oneMod = Embeddings(word_vec_size = embedSize,
+                            word_vocab_size = self.wordQty,
+                            word_padding_idx = padIdx,
+                            dropout=dropout)
+
+      self.add_module(modName, oneMod)
+      self.modules.append(oneMod)
+      totWordEmbedSize += embedSize
+
+    self.embedding_size = totWordEmbedSize
+    print('Composite/hybrid embedding size: %d' % self.embedding_size)
+
+  def forward(self, inp):
+    res = []
+    for oneMod in self.modules:
+      res.append(oneMod(inp))
+
+    return torch.cat(res, dim =2)
 
 
 

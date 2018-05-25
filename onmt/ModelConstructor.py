@@ -18,7 +18,7 @@ from onmt.Utils import use_gpu
 from torch.nn.init import xavier_uniform
 
 from spellembed.utils import getVocabSpell
-from spellembed.modules import Char2VecRNN, Char2VecCNN
+from spellembed.modules import Char2VecRNN, Char2VecCNN, Char2VecComposite
 
 def make_embeddings(opt, word_dict, feature_dicts, for_encoder=True):
     """
@@ -176,10 +176,13 @@ def make_base_model(model_opt, fields, gpu, checkpoint=None):
     feature_dicts = onmt.io.collect_feature_vocabs(fields, 'tgt')
 
     if model_opt.char_compos_type == 'none':
+
       tgt_embeddings = make_embeddings(model_opt, tgt_dict,
                                      feature_dicts, for_encoder=False)
       print('Using standard embeddings')
+
     elif model_opt.char_compos_type in ['rnn', 'brnn']:
+
       spells = getVocabSpell(tgt_dict, gpu)
       embedding_dim = model_opt.tgt_word_vec_size
       isBidir = model_opt.char_compos_type == 'brnn'
@@ -190,7 +193,25 @@ def make_base_model(model_opt, fields, gpu, checkpoint=None):
                                    isBidir=isBidir,
                                    numLayers=model_opt.char_comp_rnn_layer)
       print('Using char-level composition embeddings of type %s' % model_opt.char_compos_type)
+
+    elif model_opt.char_compos_type == 'ensemble':
+
+      spells = getVocabSpell(tgt_dict, gpu)
+      embedding_dim = model_opt.tgt_word_vec_size
+
+      chanQty = model_opt.char_comp_cnn_chan_qty
+      dropout = model_opt.dropout
+      numLayers = model_opt.char_comp_rnn_layer
+
+      configs = {'brnn': {'numLayers': numLayers, 'embedSize': embedding_dim},
+                   'cnn': {'chanQty': chanQty, 'embedSize': embedding_dim},
+                   'wembed': {'embedSize': embedding_dim}
+                   }
+      tgt_embeddings = Char2VecComposite(spells, configs,
+                                         charEmbedSize=model_opt.char_embed_size,
+                                         dropout=dropout)
     else:
+
       assert(model_opt.char_compos_type == 'cnn')
 
       spells = getVocabSpell(tgt_dict, gpu)
