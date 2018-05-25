@@ -18,11 +18,11 @@ if [ ! -d "$MODEL_DIR" ] ; then
     exit 1
 fi
 PRED_DIR=$3
-if [ "PRED_DIR" = "" ] ; then
+if [ "$PRED_DIR" = "" ] ; then
     echo "Specify prediction model dir. (3rd arg)"
     exit 1
 fi
-if [ ! -d "PRED_DIR" ] ; then
+if [ ! -d "$PRED_DIR" ] ; then
     echo "Not a directory (3rd arg)"
     exit 1
 fi
