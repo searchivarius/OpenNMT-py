@@ -9,7 +9,7 @@ perpl = []
 with open(sys.argv[1]) as f:
   ln=0
   for line in f:
-    f=f.strip()
+    line = line.strip()
     ln += 1
     if line.startswith('Validation perplexity:'):
       if len(acc) != len(perpl):
