@@ -34,7 +34,7 @@ EPOCH_QTY=2
 
 for comp_opt in none brnn cnn ; do
     python -u train.py $GPU_OPT \
-            -data $DATA_DIR/demo
+            -data $DATA_DIR/demo \
             -save_model $MODEL_DIR/$comp_opt \
             -optim sgd -learning_rate $LR $MOMENTUM $NESTEROV -dropout $DROPOUT \
             -epochs $EPOCH_QTY \
@@ -54,7 +54,7 @@ EMBED_SIZE2=300 # two methods 300*2=600 (total)
 
 for comp_opt in brnn,cnn brnn,wembed ; do
     python -u train.py $GPU_OPT \
-            -data $DATA_DIR/demo
+            -data $DATA_DIR/demo \
             -save_model $MODEL_DIR/$comp_opt \
             -optim sgd -learning_rate $LR $MOMENTUM $NESTEROV -dropout $DROPOUT \
             -epochs $EPOCH_QTY \
@@ -74,7 +74,7 @@ EMBED_SIZE3=200 # three methods 200*3=600 (total)
 
 for comp_opt in brnn,cnn,wembed ; do
     python -u train.py $GPU_OPT \
-            -data $DATA_DIR/demo
+            -data $DATA_DIR/demo  \
             -save_model $MODEL_DIR/$comp_opt \
             -optim sgd -learning_rate $LR $MOMENTUM $NESTEROV -dropout $DROPOUT \
             -epochs $EPOCH_QTY \
