@@ -23,6 +23,6 @@ with open(sys.argv[1]) as f:
 
 
 epochs = len(acc)
-print('\t'.join([str(i) for i in range(epochs)]))
+print('\t'.join([str(i+1) for i in range(epochs)]))
 print('\t'.join(acc))
 print('\t'.join(perpl))
