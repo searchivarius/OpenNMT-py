@@ -5,7 +5,7 @@ if [ "$DATA_DIR" = "" ] ; then
     exit 1
 fi
 if [ ! -d "$DATA_DIR" ] ; then
-    echo "Not a directory (1st arg)"
+    echo "Not a directory: $DATA_DIR (1st arg)"
     exit 1
 fi
 MODEL_DIR=$2
@@ -14,7 +14,7 @@ if [ "$MODEL_DIR" = "" ] ; then
     exit 1
 fi
 if [ ! -d "$MODEL_DIR" ] ; then
-    echo "Not a directory (2d arg)"
+    echo "Not a directory: $MODEL_DIR (2d arg)"
     exit 1
 fi
 PRED_DIR=$3
@@ -23,7 +23,7 @@ if [ "$PRED_DIR" = "" ] ; then
     exit 1
 fi
 if [ ! -d "$PRED_DIR" ] ; then
-    echo "Not a directory (3rd arg)"
+    echo "Not a directory: $PRED_DIR (3rd arg)"
     exit 1
 fi
 COMP_OPT=$4
