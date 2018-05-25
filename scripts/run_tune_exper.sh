@@ -10,9 +10,14 @@ if [ ! -d "$DATA_DIR" ] ; then
 fi
 MODEL_DIR=$2
 if [ "$MODEL_DIR" = "" ] ; then
-    echo "Specify model dir. (1d arg)"
+    echo "Specify TUNING model dir. (1d arg)"
     exit 1
 fi
+if [ ! -d "$MODEL_DIR" ] ; then
+    echo "Not a directory (2d arg)"
+    exit 1
+fi
+rm -f $MODEL_DIR/*
 GPU_ID=$3
 GPU_OPT=""
 if [ "$GPU_ID" != "" ] ; then
@@ -30,7 +35,7 @@ EMBED_SIZE1=600 # one method dim=600 (total)
 
 CHAN_QTY=100
 RNN_LAYER_QTY=2
-EPOCH_QTY=2
+EPOCH_QTY=1
 
 for comp_opt in none brnn cnn ; do
     python -u train.py $GPU_OPT \
