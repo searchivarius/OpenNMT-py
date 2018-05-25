@@ -1,6 +1,7 @@
 import argparse
 from onmt.modules.SRU import CheckSRU
 
+from spellembed.utils import powerset
 
 def model_opts(parser):
     """
@@ -85,12 +86,6 @@ def model_opts(parser):
                        action=CheckSRU,
                        help="""The gate type to use in the RNNs""")
 
-    group.add_argument('-char_compos_type', type=str,
-                       default = 'none', choices = set(['cnn', 'rnn', 'brnn', 'ensemble', 'none']))
-    group.add_argument('-char_embed_size', type=int, default = 50)
-    group.add_argument('-char_comp_rnn_layer', type=int, default=2)
-    group.add_argument('-char_comp_cnn_chan_qty', type=int, default=50)
-
     # group.add_argument('-residual',   action="store_true",
     #                     help="Add residual connections between RNN layers.")
 
@@ -126,6 +121,23 @@ def model_opts(parser):
     group.add_argument('-lambda_coverage', type=float, default=1,
                        help='Lambda value for coverage.')
 
+    # Embeding composition options
+    group = parser.add_argument_group('Embeddings-compositions')
+    basic = ['rnn', 'brnn', 'cnn', 'wembed']
+    combs = []
+    for oneComb in powerset(basic):
+      if oneComb:
+        combs.append('-'.join(oneComb))
+
+    group.add_argument('-char_compos_type', type=str,
+                       default = 'none', choices = ['none'] + combs,
+                       help='Character embedding composition size')
+    group.add_argument('-char_embed_size', type=int, default = 50,
+                       help='Character embedding size')
+    group.add_argument('-char_comp_rnn_layer', type=int, default=2,
+                       help='Character embedding composing (Bi)RNN layer number')
+    group.add_argument('-char_comp_cnn_chan_qty', type=int, default=100,
+                       help='Character embedding composing CNN channel number')
 
 def preprocess_opts(parser):
     # Data options

@@ -3,7 +3,7 @@ import torch
 from torch.nn import Module, Dropout, LSTM, Embedding, Linear, Conv1d
 from torch.autograd import Variable
 
-from torch.nn.utils.rnn import pack_padded_sequence as pack
+from torch.nn.utils.rnn import pack_padded_sequence as pack, pad_packed_sequence as unpack
 
 from onmt.modules.Embeddings import Embeddings
 
@@ -137,15 +137,17 @@ class Char2VecRNN(Char2VecBase):
                padIdx=0,
                dropout=0.3,
                numLayers=2,
-               isBidir=True):
+               isBiDir=True):
     super(Char2VecRNN, self).__init__(vocabSpell,
                                        wordEmbedSize,
                                        charEmbedSize,
                                        padIdx,
                                        dropout)
 
+    self.isBiDir = isBiDir
     self.charRnn = LSTM(charEmbedSize, wordEmbedSize, num_layers=numLayers,
-                        dropout=0, bidirectional=isBidir)
+                        dropout=0, bidirectional=isBiDir,
+                        batch_first=False)
     for w in self.charRnn.all_weights:
       initWeights(w)
 
@@ -164,12 +166,12 @@ class Char2VecRNN(Char2VecBase):
                         tensorToList(lenTensorSorted),
                         batch_first=False)
 
-    output, (ht, ct) = self.charRnn(embedsPackedSorted, None)
+    outPacked, (ht, ct) = self.charRnn(embedsPackedSorted, None)
 
     if self.charRnn.bidirectional:
-      ht = ht[0, :, :] + ht[1, :, :]
+      ht = ht[-1, :, :] + ht[-2, :, :]
     else:
-      ht = ht.squeeze(dim=0)
+      ht = ht[-1, :, :]
 
     ht = tensorUnsort(ht, sortIdx)
     ht = self.rnnFC(ht)
@@ -205,7 +207,7 @@ class Char2VecComposite(Module):
                              wordEmbedSize=embedSize,
                              charEmbedSize=charEmbedSize,
                              dropout=dropout,
-                             isBidir=isBiDir,
+                             isBiDir=isBiDir,
                              numLayers=modConfig['numLayers'])
 
       elif modName == 'cnn':

@@ -5,6 +5,14 @@ SPECIAL_TOKEN_LIST = ['<unk>', '<blank>', '<s>', '</s>']
 SPECIAL_TOKENS = set(SPECIAL_TOKEN_LIST)
 ONE_WORD_TOKENS = set(['&quot;', '...', '&apos;', '-lrb-', '-rrb-'])
 
+from itertools import chain, combinations
+
+# recepy from https://docs.python.org/2.7/library/itertools.html#recipes
+def powerset(iterable):
+  "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
+  s = list(iterable)
+  return chain.from_iterable(combinations(s, r) for r in range(len(s) + 1))
+
 def wordToChars(s):
   if s in SPECIAL_TOKENS or s in ONE_WORD_TOKENS:
     return [s]

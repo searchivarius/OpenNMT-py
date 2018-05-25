@@ -181,20 +181,7 @@ def make_base_model(model_opt, fields, gpu, checkpoint=None):
                                      feature_dicts, for_encoder=False)
       print('Using standard embeddings')
 
-    elif model_opt.char_compos_type in ['rnn', 'brnn']:
-
-      spells = getVocabSpell(tgt_dict, gpu)
-      embedding_dim = model_opt.tgt_word_vec_size
-      isBidir = model_opt.char_compos_type == 'brnn'
-      tgt_embeddings = Char2VecRNN(spells,
-                                   wordEmbedSize=embedding_dim,
-                                   charEmbedSize=model_opt.char_embed_size,
-                                   dropout=model_opt.dropout,
-                                   isBidir=isBidir,
-                                   numLayers=model_opt.char_comp_rnn_layer)
-      print('Using char-level composition embeddings of type %s' % model_opt.char_compos_type)
-
-    elif model_opt.char_compos_type == 'ensemble':
+    else:
 
       spells = getVocabSpell(tgt_dict, gpu)
       embedding_dim = model_opt.tgt_word_vec_size
@@ -203,25 +190,24 @@ def make_base_model(model_opt, fields, gpu, checkpoint=None):
       dropout = model_opt.dropout
       numLayers = model_opt.char_comp_rnn_layer
 
-      configs = {'brnn': {'numLayers': numLayers, 'embedSize': embedding_dim},
-                   'cnn': {'chanQty': chanQty, 'embedSize': embedding_dim},
-                   'wembed': {'embedSize': embedding_dim}
-                   }
+      configs = {}
+
+      for compType in model_opt.char_compos_type.split('-'):
+
+        if compType == 'brnn':
+          configs['brnn'] = {'numLayers': numLayers, 'embedSize': embedding_dim}
+        elif compType == 'rnn':
+          configs['rnn'] = {'numLayers': numLayers, 'embedSize': embedding_dim}
+        elif compType == 'cnn':
+          configs['cnn'] = {'chanQty': chanQty, 'embedSize': embedding_dim}
+        elif compType == 'wembed':
+          configs['wembed'] = {'embedSize': embedding_dim}
+        else:
+          raise Exception('Invalid composition type: ' + compType)
+
       tgt_embeddings = Char2VecComposite(spells, configs,
                                          charEmbedSize=model_opt.char_embed_size,
                                          dropout=dropout)
-    else:
-
-      assert(model_opt.char_compos_type == 'cnn')
-
-      spells = getVocabSpell(tgt_dict, gpu)
-      embedding_dim = model_opt.tgt_word_vec_size
-
-      tgt_embeddings = Char2VecCNN(spells,
-                                   wordEmbedSize=embedding_dim,
-                                   charEmbedSize=model_opt.char_embed_size,
-                                   chanQty=model_opt.char_comp_cnn_chan_qty,
-                                   dropout=model_opt.dropout)
 
       print('Using char-level composition embeddings of type %s' % model_opt.char_compos_type)
 
