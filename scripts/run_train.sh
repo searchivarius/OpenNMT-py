@@ -29,13 +29,17 @@ if [ "$EPOCH_QTY" = "" ] ; then
 fi
 PREVIOUS_MODEL=$5
 if [ "PREVIOUS_MODEL" != "" ] ; then
-    TRAIN_FROM="-train_from PREVIOUS_MODEL
+    if [ ! -f "$PREVIOUS_MODEL" ] ; then
+        echo "Not a file (5th arg): $PREVIOUS_MODEL"
+    fi
+    TRAIN_FROM="-train_from PREVIOUS_MODEL"
     echo "Reusing the model: $PREVIOUS_MODEL"
 fi
 
 GPU_ID=$6
 GPU_OPT=""
 if [ "$GPU_ID" != "" ] ; then
+    echo "Using GPU id $GPU_ID"
     GPU_OPT=" -gpuid $GPU_ID"
 fi
 TRG_PREFIX="procData"
