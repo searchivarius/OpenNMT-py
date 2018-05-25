@@ -32,7 +32,7 @@ if [ "PREVIOUS_MODEL" != "" ] ; then
     if [ ! -f "$PREVIOUS_MODEL" ] ; then
         echo "Not a file (5th arg): $PREVIOUS_MODEL"
     fi
-    TRAIN_FROM="-train_from PREVIOUS_MODEL"
+    TRAIN_FROM="-train_from $PREVIOUS_MODEL"
     echo "Reusing the model: $PREVIOUS_MODEL"
 fi
 
