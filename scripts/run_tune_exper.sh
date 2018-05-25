@@ -36,7 +36,7 @@ for comp_opt in none brnn cnn ; do
     python -u train.py $GPU_OPT \
             -data $DATA_DIR/demo \
             -save_model $MODEL_DIR/$comp_opt \
-            -optim sgd -learning_rate $LR $MOMENTUM $NESTEROV -dropout $DROPOUT \
+            -optim sgd -learning_rate $START_LR $MOMENTUM $NESTEROV -dropout $DROPOUT \
             -epochs $EPOCH_QTY \
             -tgt_vocab_size $TGT_VOC_SIZE \
             -tgt_word_vec_size $EMBED_SIZE1 \
@@ -56,7 +56,7 @@ for comp_opt in brnn,cnn brnn,wembed ; do
     python -u train.py $GPU_OPT \
             -data $DATA_DIR/demo \
             -save_model $MODEL_DIR/$comp_opt \
-            -optim sgd -learning_rate $LR $MOMENTUM $NESTEROV -dropout $DROPOUT \
+            -optim sgd -learning_rate $START_LR $MOMENTUM $NESTEROV -dropout $DROPOUT \
             -epochs $EPOCH_QTY \
             -tgt_vocab_size $TGT_VOC_SIZE \
             -tgt_word_vec_size $EMBED_SIZE2 \
@@ -76,7 +76,7 @@ for comp_opt in brnn,cnn,wembed ; do
     python -u train.py $GPU_OPT \
             -data $DATA_DIR/demo  \
             -save_model $MODEL_DIR/$comp_opt \
-            -optim sgd -learning_rate $LR $MOMENTUM $NESTEROV -dropout $DROPOUT \
+            -optim sgd -learning_rate $START_LR $MOMENTUM $NESTEROV -dropout $DROPOUT \
             -epochs $EPOCH_QTY \
             -tgt_vocab_size $TGT_VOC_SIZE \
             -tgt_word_vec_size $EMBED_SIZE3 \
