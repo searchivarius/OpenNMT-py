@@ -56,7 +56,7 @@ done
 
 EMBED_SIZE2=300 # two methods 300*2=600 (total)
 
-for comp_opt in brnn,cnn brnn,wembed ; do
+for comp_opt in brnn-cnn brnn-wembed ; do
     python -u train.py $GPU_OPT \
             -data $DATA_DIR/$TRG_PREFIX \
             -save_model $MODEL_DIR/$comp_opt \

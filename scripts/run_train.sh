@@ -10,7 +10,7 @@ if [ ! -d "$DATA_DIR" ] ; then
 fi
 MODEL_DIR=$2
 if [ "$MODEL_DIR" = "" ] ; then
-    echo "Specify TUNING model dir. (1d arg)"
+    echo "Specify DATA model dir. (1d arg)"
     exit 1
 fi
 if [ ! -d "$MODEL_DIR" ] ; then
