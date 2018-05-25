@@ -48,6 +48,7 @@ class Optim(object):
                  lr_decay=1, start_decay_at=None,
                  beta1=0.9, beta2=0.999,
                  momentum = 0.9,
+                 nesterov = False,
                  weight_decay = 0.001,
                  adagrad_accum=0.0,
                  decay_method=None,
@@ -63,8 +64,9 @@ class Optim(object):
         self.start_decay = False
         self._step = 0
         self.betas = [beta1, beta2]
-        self.momentum = momentum,
-        self.weight_decay = weight_decay,
+        self.momentum = momentum
+        self.nesterov = nesterov
+        self.weight_decay = weight_decay
         self.adagrad_accum = adagrad_accum
         self.decay_method = decay_method
         self.warmup_steps = warmup_steps
@@ -81,7 +83,7 @@ class Optim(object):
                     self.sparse_params.append(p)
         if self.method == 'sgd':
             self.optimizer = optim.SGD(self.params, lr=self.lr, momentum=self.momentum,
-                                       weight_decay=self.weight_decay, nesterov=True)
+                                       weight_decay=self.weight_decay, nesterov=self.nesterov)
 
         elif self.method == 'adagrad':
             self.optimizer = optim.Adagrad(self.params, lr=self.lr)

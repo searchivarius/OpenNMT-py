@@ -368,6 +368,13 @@ def train_opts(parser):
     group.add_argument('-warmup_steps', type=int, default=4000,
                        help="""Number of warmup steps for custom decay.""")
 
+    group.add_argument('-momentum', type=float, default=0.9,
+                       help="""SGD momentum""")
+    group.add_argument('-weight_decay', type=float, default=0.001,
+                       help="""L2-penalty for SGD""")
+    group.add_argument('-nesterov', action="store_true",
+                       help="""Use Nesterov's momentum in SGD""")
+
     group = parser.add_argument_group('Logging')
     group.add_argument('-report_every', type=int, default=50,
                        help="Print stats at this interval.")

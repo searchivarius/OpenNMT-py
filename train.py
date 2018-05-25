@@ -401,6 +401,9 @@ def build_optim(model, checkpoint):
             beta2=opt.adam_beta2,
             adagrad_accum=opt.adagrad_accumulator_init,
             decay_method=opt.decay_method,
+            momentum=opt.momentum,
+            weight_decay=opt.weight_decay,
+            nesterov=opt.nesterov,
             warmup_steps=opt.warmup_steps,
             model_size=opt.rnn_size)
 
