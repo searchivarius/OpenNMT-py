@@ -27,8 +27,13 @@ if [ "$EPOCH_QTY" = "" ] ; then
     echo "Specify the number of epoch (4th arg)"
     exit 1
 fi
+PREVIOUS_MODEL=$5
+if [ "PREVIOUS_MODEL" != "" ] ; then
+    TRAIN_FROM="-train_from PREVIOUS_MODEL
+    echo "Reusing the model: $PREVIOUS_MODEL"
+fi
 
-GPU_ID=$5
+GPU_ID=$6
 GPU_OPT=""
 if [ "$GPU_ID" != "" ] ; then
     GPU_OPT=" -gpuid $GPU_ID"
@@ -49,6 +54,7 @@ CHAN_QTY=100
 RNN_LAYER_QTY=2
 
 python -u train.py $GPU_OPT \
+        $TRAIN_FROM \
         -data $DATA_DIR/$TRG_PREFIX \
         -save_model $MODEL_DIR/$COMP_OPT \
         -optim sgd -learning_rate $START_LR $MOMENTUM $NESTEROV -dropout $DROPOUT \
