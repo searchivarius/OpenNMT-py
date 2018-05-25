@@ -27,21 +27,23 @@ if [ "$EPOCH_QTY" = "" ] ; then
     echo "Specify the number of epoch (4th arg)"
     exit 1
 fi
-PREVIOUS_MODEL=$5
-if [ "$PREVIOUS_MODEL" != "" ] ; then
-    if [ ! -f "$PREVIOUS_MODEL" ] ; then
-        echo "Not a file (5th arg): $PREVIOUS_MODEL"
-    fi
-    TRAIN_FROM="-train_from $PREVIOUS_MODEL"
-    echo "Reusing the model: $PREVIOUS_MODEL"
-fi
-
-GPU_ID=$6
+GPU_ID=$5
 GPU_OPT=""
 if [ "$GPU_ID" != "" ] ; then
     echo "Using GPU id $GPU_ID"
     GPU_OPT=" -gpuid $GPU_ID"
 fi
+
+PREVIOUS_MODEL=$6
+if [ "$PREVIOUS_MODEL" != "" ] ; then
+    if [ ! -f "$PREVIOUS_MODEL" ] ; then
+        echo "Not a file (6th arg): $PREVIOUS_MODEL"
+    fi
+    TRAIN_FROM="-train_from $PREVIOUS_MODEL"
+    echo "Reusing the model: $PREVIOUS_MODEL"
+fi
+
+
 TRG_PREFIX="procData"
 
 START_LR=0.1
