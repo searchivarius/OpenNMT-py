@@ -1,4 +1,5 @@
 # OpenNMT-py: Open-Source Neural Machine Translation
+This is the version of OpenNMT that my team created at Pittsburgh machine translation marathon in May 2018. [Our participation is briefly covered in the blog post](http://searchivarius.org/blog/getting-speed-neural-machine-translation-how-not-burn-yourself-pytorch). The main idea of implementing a special character aware drop-in replacement for the word embeddings belongs to our JHU team members: Adithya Renduchintala, Pamela Shapiro, and Sebastian J. Mielke.
 
 [![Build Status](https://travis-ci.org/OpenNMT/OpenNMT-py.svg?branch=master)](https://travis-ci.org/OpenNMT/OpenNMT-py)
 
